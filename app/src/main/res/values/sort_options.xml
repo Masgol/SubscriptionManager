@@ -1,0 +1,10 @@
+<resources>
+    <!-- Other string resources -->
+
+    <string-array name="sort_options">
+        <item>Name</item>
+        <item>Cost</item>
+        <item>Start Date</item>
+        <item>End Date</item>
+    </string-array>
+</resources>

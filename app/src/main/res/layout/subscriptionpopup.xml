@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="15dp"
+    android:backgroundTint="#E1E1E1"
+    android:background="@drawable/buttonbackground"
+    android:gravity="center_horizontal">
+
+    <TextView
+        android:id="@+id/subscription_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="10dp"
+        android:text="SUBSCRIPTION"
+        android:textAlignment="center"
+        android:textSize="25sp" />
+
+    <EditText
+        android:id="@+id/editTextSubscriptionName"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@+id/subscription_text"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="5dp"
+        android:textSize="25sp"
+        android:background="@drawable/buttonbackground"
+        android:backgroundTint="#FFFFFF"
+        android:hint="Subscription Name"
+        android:textAlignment="center" />
+
+    <LinearLayout
+        android:id="@+id/linearLayoutDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editTextSubscriptionName"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="5dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/editTextStartDate"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="35dp"
+            android:background="@drawable/buttonbackground"
+            android:backgroundTint="#FFFFFF"
+            android:clickable="true"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:hint="Start Date"
+            android:layout_marginEnd="5dp"
+            android:textAlignment="center" />
+
+        <EditText
+            android:id="@+id/editTextEndDate"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:layout_below="@+id/editTextSubscriptionName"
+            android:background="@drawable/buttonbackground"
+            android:backgroundTint="#FFFFFF"
+            android:clickable="true"
+            android:focusable="false"
+            android:hint="End Date"
+            android:textAlignment="center" />
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/editTextCost"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_below="@+id/linearLayoutDate"
+        android:background="@drawable/buttonbackground"
+        android:backgroundTint="#FFFFFF"
+        android:hint="Cost"
+        android:textAlignment="center" />
+
+    <LinearLayout
+        android:id="@+id/linearLayoutCategory"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_below="@+id/editTextCost"
+        android:layout_marginTop="5dp"
+        >
+
+    <TextView
+        android:id="@+id/textViewCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:text="Category: "
+        android:layout_below="@+id/editTextCost"
+
+        />
+
+    <Spinner
+        android:id="@+id/spinnerCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:spinnerMode="dialog"
+        android:layout_weight="1"
+        android:dropDownHeight="150dp"
+        android:layout_marginStart="5dp"
+        android:layout_below="@id/editTextCost"
+        android:layout_toEndOf="@id/textViewCategory"
+        android:background="@drawable/buttonbackground"
+        android:backgroundTint="#CDCDCD"
+        android:entries="@array/subscription_categories"
+        android:hint="category" />
+
+
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_weight="4"
+        android:layout_marginStart="5dp"
+        android:layout_alignParentEnd="true"
+        android:backgroundTint="#1E1F22"
+        android:background="@drawable/buttonbackground"
+        android:text="SAVE" />
+    </LinearLayout>
+</RelativeLayout>

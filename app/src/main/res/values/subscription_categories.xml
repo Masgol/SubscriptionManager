@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="subscription_categories">
+        <item>Entertainment</item>
+        <item>Health/Fitness</item>
+        <item>Education</item>
+        <item>Food/Dining</item>
+        <item>Transportation</item>
+        <item>Utilities</item>
+        <item>Shopping</item>
+        <item>Travel</item>
+        <item>Other</item>
+    </string-array>
+
+</resources>
