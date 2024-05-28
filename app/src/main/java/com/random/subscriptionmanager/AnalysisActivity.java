@@ -4,13 +4,29 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.ColorInt;
-import androidx.appcompat.app.AlertDialog;
+import android.graphics.Color;
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import androidx.appcompat.app.AppCompatActivity;
 
 
@@ -24,9 +40,10 @@ public class AnalysisActivity extends AppCompatActivity {
     private TextView tv_totalsubs, tv_totalCost, tv_subName, tv_daily, tv_monthly, tv_yearly, tv_daysleft;
     private Button SubscriptionScreenbutton;
     LinearLayout subscriptionList;
-
-
-
+    private BarChart barChart;
+    private PieChart pieChart;
+    private LineChart lineChart;
+    private ProgressBar progressBar;
     private SubscriptionManager subscriptionManager;
 
     @Override
@@ -61,20 +78,21 @@ public class AnalysisActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-
-
-
-
-
-
-
-
-
+        barChart.setVisibility(View.VISIBLE);
+        ChartsService.prepareChartData(subscriptions, barChart);
     }
+
+
+
+
+
 
     public void initiateViews(){
         SubscriptionScreenbutton = findViewById(R.id.SubscriptionScreenbutton);
+        barChart = findViewById(R.id.barChartSubscriptions);
+        progressBar = findViewById(R.id.progressBarRemainingDuration);
+        pieChart = findViewById(R.id.pieChartCostBreakdown);
+        lineChart = findViewById(R.id.lineChartCostOverTime);
         tv_totalsubs = findViewById(R.id.tv_totalsubs);
         tv_totalCost = findViewById(R.id.tv_totalCost);
         subscriptionList = findViewById(R.id.subscriptionList);
@@ -111,6 +129,17 @@ public class AnalysisActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 handleSubscriptionClick((Subscription) v.getTag());
+                barChart.setVisibility(View.GONE);
+                ChartsService.setupProgressBar(progressBar, subscription);
+                progressBar.setVisibility(View.VISIBLE);
+                ChartsService.setupLineChart(lineChart, subscription);
+                lineChart.setVisibility(View.VISIBLE);
+                ChartsService.setupPieChart(pieChart, subscription);
+                pieChart.setVisibility(View.VISIBLE);
+
+
+
+
             }
         });
         return textView;

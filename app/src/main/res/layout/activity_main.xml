@@ -58,6 +58,20 @@
     </RelativeLayout>
 
 
+    <ListView
+        android:id="@+id/expiredSubscriptionsListView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginHorizontal="25dp"
+        android:backgroundTint="@color/white"
+        android:padding="10dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/topRelativeLayout"
+        app:layout_constraintBottom_toTopOf="@+id/buttonlayout"/>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -67,6 +81,7 @@
         android:layout_marginHorizontal="25dp"
         android:backgroundTint="@color/white"
         android:padding="10dp"
+        android:visibility="visible"
         app:layout_constraintTop_toBottomOf="@+id/topRelativeLayout"
         app:layout_constraintBottom_toTopOf="@+id/buttonlayout"/>
 
@@ -86,13 +101,22 @@
 
         <ImageButton
             android:id="@+id/analysisSectionButton"
-            android:layout_width="120dp"
+            android:layout_width="60dp"
             android:layout_height="50dp"
             android:layout_gravity="start"
             android:layout_alignParentStart="true"
             android:backgroundTint="@color/white"
             android:background="@drawable/buttonbackground"
             />
+
+        <ImageButton
+            android:id="@+id/expiredSubscriptionsButton"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@+id/analysisSectionButton"
+            android:background="@drawable/buttonbackground"
+            android:backgroundTint="@color/white" />
 
         <ImageButton
             android:id="@+id/new_subscription"

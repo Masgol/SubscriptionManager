@@ -10,18 +10,25 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -48,46 +55,101 @@ public class MainActivity extends AppCompatActivity implements SubscriptionAdapt
     private Calendar calendar;
     private RecyclerView recyclerViewSubscriptions;
     private SubscriptionAdapter subscriptionAdapter;
+    private Subscription subscriptions;
+    private ListView expiredSubscriptionsListView;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
     private static final String FILE_NAME = "subscriptions.json";
-    private ImageButton newSubscriptionButton;
     private EditText searchEditText;
-    private ImageButton analysisSectionButton;
+    private ImageButton analysisSectionButton, expiredSubscriptionsButton, newSubscriptionButton;
     private SubscriptionManager subscriptionManager;
+    ArrayAdapter<Subscription> finalAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         EdgeToEdge.enable(this);
-        initializeViews();
 
         subscriptionManager = SubscriptionManager.getInstance(this);
-        loadSubscriptions();
 
+        initializeViews();
+        loadSubscriptions();
         setupRecyclerView();
         setupSearchBar();
         setNewSubscriptionClickListener();
-
         loadAnalysisScreen(analysisSectionButton);
 
         calendar = Calendar.getInstance();
         Spinner sortSpinner = findViewById(R.id.sortSpinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+        ArrayAdapter<CharSequence> sortAdapter = ArrayAdapter.createFromResource(
                 this, R.array.sort_options, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sortSpinner.setAdapter(adapter);
-
+        sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sortSpinner.setAdapter(sortAdapter);
         sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 SortCriteria criteria = SortCriteria.values()[position];
                 sortSubscriptions(criteria);
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 // Do nothing
+            }
+        });
+
+        List<Subscription> expiredSubscriptions = subscriptionManager != null ? subscriptionManager.getExpiredSubscriptions() : new ArrayList<>();
+
+
+            finalAdapter = new ArrayAdapter<Subscription>(this, android.R.layout.simple_list_item_1, expiredSubscriptions) {
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View listItemView = convertView;
+                if (listItemView == null) {
+                    listItemView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_expired_subscription, parent, false);
+                }
+
+                Subscription currentSubscription = getItem(position);
+
+                TextView subscriptionNameTextView = listItemView.findViewById(R.id.subscriptionNameTextView);
+                Button restoreButton = listItemView.findViewById(R.id.restoreButton);
+
+                assert currentSubscription != null;
+                subscriptionNameTextView.setText(currentSubscription.getName());
+
+                restoreButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Implement logic to restore the subscription
+                        if (currentSubscription != null) {
+                            // Example: Call a method to restore the subscription
+                            onUpdateClick(currentSubscription);
+                                            expiredSubscriptions.remove(currentSubscription);
+                                            subscriptionManager.addSubscription(currentSubscription);
+
+                            finalAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+
+                return listItemView;
+            }
+        };
+
+        expiredSubscriptionsListView.setAdapter(finalAdapter);
+
+
+
+        expiredSubscriptionsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (expiredSubscriptionsListView.getVisibility() == View.GONE) {
+                    expiredSubscriptionsListView.setVisibility(View.VISIBLE);
+                    recyclerViewSubscriptions.setVisibility(View.GONE);
+                } else {
+                    expiredSubscriptionsListView.setVisibility(View.GONE);
+                    recyclerViewSubscriptions.setVisibility(View.VISIBLE);
+                }
             }
         });
     }
@@ -135,11 +197,12 @@ public class MainActivity extends AppCompatActivity implements SubscriptionAdapt
     }
 
     private void initializeViews() {
-        View popupView = getLayoutInflater().inflate(R.layout.subscriptionpopup, null);
         calendar = Calendar.getInstance();
+        expiredSubscriptionsListView = findViewById(R.id.expiredSubscriptionsListView);
         analysisSectionButton = findViewById(R.id.analysisSectionButton);
         newSubscriptionButton = findViewById(R.id.new_subscription);
         recyclerViewSubscriptions = findViewById(R.id.recyclerViewSubscriptions);
+        expiredSubscriptionsButton = findViewById(R.id.expiredSubscriptionsButton);
     }
 
     public void showDatePickerDialog(View view) {
@@ -288,7 +351,6 @@ public class MainActivity extends AppCompatActivity implements SubscriptionAdapt
             e.printStackTrace();
         }
     }
-
     @Override
     public void onUpdateClick(Subscription subscription) {
         Dialog dialog = new Dialog(MainActivity.this);
@@ -310,9 +372,9 @@ public class MainActivity extends AppCompatActivity implements SubscriptionAdapt
 
         // Show the dialog
         dialog.show();
-
+        onSaveButtonClick(view, dialog);
         // Set onClickListener for save button
-        dialog.findViewById(R.id.saveButton).setOnClickListener(new View.OnClickListener() {
+      /*  dialog.findViewById(R.id.saveButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Update the subscription with new info
@@ -333,16 +395,14 @@ public class MainActivity extends AppCompatActivity implements SubscriptionAdapt
                 // Dismiss dialog
                 dialog.dismiss();
             }
-        });
+        });*/
     }
-
     public enum SortCriteria {
         NAME,
         COST,
         START_DATE,
         END_DATE
     }
-
     private void sortSubscriptions(SortCriteria criteria) {
         List<Subscription> subscriptions = subscriptionManager.getSubscriptions();
 
@@ -384,7 +444,6 @@ public class MainActivity extends AppCompatActivity implements SubscriptionAdapt
         // Update RecyclerView
         subscriptionAdapter.notifyDataSetChanged();
     }
-
     private void setNotification(Subscription subscription) {
         Intent intent = new Intent(this, NotificationReceiver.class);
         intent.putExtra("subscription_name", subscription.getName());
@@ -397,4 +456,11 @@ public class MainActivity extends AppCompatActivity implements SubscriptionAdapt
 
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
+
+
+
+
+
+
+
 }

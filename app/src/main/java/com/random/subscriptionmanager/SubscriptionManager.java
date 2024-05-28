@@ -10,10 +10,13 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class SubscriptionManager {
     private static SubscriptionManager instance;
@@ -83,6 +86,27 @@ public class SubscriptionManager {
     }
 
 
+    public List<Subscription> getExpiredSubscriptions() {
+        List<Subscription> expiredSubscriptions = new ArrayList<>();
+        Date currentDate = new Date(); // Get the current date
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            Date startDate = dateFormat.parse("2023-06-01");
+            Date endDate = dateFormat.parse("2023-06-06");
+
+            expiredSubscriptions.add(new Subscription(55, "name", startDate, endDate, 25, "Other"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+            if (subscriptions != null) {
+            for (Subscription subscription : subscriptions) {
+                if (subscription.getEndDate().before(currentDate)) {
+                    expiredSubscriptions.add(subscription);
+                }
+            }
+        }
+        return expiredSubscriptions;
+    }
 
 
 
